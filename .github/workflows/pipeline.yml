@@ -50,11 +50,11 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          body: Stilll in experimentation phase
+          body: Still in experimentation phase
           draft: true
           prerelease: true
       - name: Upload Release Binary
-        uses: actions/upload-release-assets@v1
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
         with:
