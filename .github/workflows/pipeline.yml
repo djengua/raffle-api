@@ -87,3 +87,23 @@ jobs:
         with:
           name: api
           path: artifacts
+  deploy-function:
+    name: Deploy FaaS
+    runs-on: ubuntu-latest
+    needs: test
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main'}}
+    steps:
+      - name: Check out the code into the Go module directory
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Deploy function
+        id: deploy
+        uses: google-github-actions/deploy-cloud-functions@main
+        with:
+          name: translate
+          entry_point: Translate
+          runtime: go116
+          credentials: ${{ secrets.gcp_credentials }}
+      - id: test
+        run: curl "${{ steps.deploy.outputs.url }}/hello"
