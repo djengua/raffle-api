@@ -59,8 +59,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
         with:
           upload_url: ${{steps.create_release.outputs.upload_url}}
-          assets_path: api
-          assets_name: api
+          asset_path: api
+          asset_name: api
           asset_content_type: application/octet-stream
   build:
     name: Build App
