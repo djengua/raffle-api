@@ -101,9 +101,10 @@ jobs:
         id: deploy
         uses: google-github-actions/deploy-cloud-functions@main
         with:
+          project_id: djengua-203420
           name: translate
           entry_point: Translate
-          runtime: go116
+          runtime: go12
           credentials: ${{ secrets.GCP_CREDENTIALS }}
       - id: test
         run: curl "${{ steps.deploy.outputs.url }}/hello"
