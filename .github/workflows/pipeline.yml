@@ -97,6 +97,12 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - name: Setup GCP Service Account
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: djengua-203420
+          service_account_key: ${{ secrets.GCP_CREDENTIALS }}
+          export_default_credentials: true
       - name: Deploy function
         id: deploy
         uses: google-github-actions/deploy-cloud-functions@main
@@ -105,6 +111,6 @@ jobs:
           name: translate
           entry_point: Translate
           runtime: go12
-          credentials: ${{ secrets.gcp_credentials }}
+          credentials: ${{ secrets.GCP_CREDENTIALS }}
       - id: test
         run: curl "${{ steps.deploy.outputs.url }}/hello"
