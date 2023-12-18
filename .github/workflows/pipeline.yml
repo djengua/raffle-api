@@ -98,7 +98,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup GCP Service Account
-        uses: google-github-actions/setup-gcloud@main
+        uses: google-github-actions/setup-gcloud@v1
         with:
           service_account_key: ${{ secrets.GCP_CREDENTIALS }}
           export_default_credentials: true
