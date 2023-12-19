@@ -98,7 +98,7 @@ jobs:
           fetch-depth: 0
       - name: Set Credential File
         run: |
-          echo '${{ secrets.gcp_credentials_2 }}' > gcp_test_credentials.json
+          echo '${{ secrets.GCP_CREDENTIALS_2 }}' > gcp_test_credentials.json
       - id: auth
         uses: google-github-actions/auth@v2
         with:
