@@ -45,7 +45,7 @@ func TestTranslateAPI(t *testing.T) {
 
 		var resp handlers.Resp
 		// Decodes the body of the response into a struct to be asserted
-		json.Unmarshal(rr.Body.Bytes(), &resp)
+		_ = json.Unmarshal(rr.Body.Bytes(), &resp)
 
 		if resp.Language != test.ExpectedLanguage {
 			t.Errorf(`expected language "%s" but received %s`, test.ExpectedLanguage, resp.Language)
