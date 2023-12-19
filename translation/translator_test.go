@@ -1,7 +1,6 @@
 package translation_test
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/djengua/rifa-api/translation"
@@ -55,9 +54,4 @@ func TestTranslate(t *testing.T) {
 			t.Errorf(`expected "%s" to be "%s" from "%s" but received "%s"`, test.Word, test.Language, test.Translation, res)
 		}
 	}
-}
-
-func sanitizeInput(w string) string {
-	w = strings.ToLower(w)
-	return strings.TrimSpace(w)
 }
