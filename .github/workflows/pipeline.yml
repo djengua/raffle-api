@@ -98,8 +98,8 @@ jobs:
           fetch-depth: 0
       - name: Deploy App
         id: deploy
-        uses: google-github-actions/deploy-appengin@main
+        uses: google-github-actions/deploy-appengine@main
         with:
-          creedentials: ${{ secrets.gcp_credentials }}
+          creedentials: ${{ secrets.gcp_credentials_2 }}
       - id: test
         run: curl "${{ steps.deploy.outputs.url }}/hello"
