@@ -1,3 +1,15 @@
+GO_VERSION := 1.2
+
+setup:
+	install-go
+	init-go
+install-go:
+	wget "https://golang.org/dl/go$(GO_VERSION).linux-amd64.tar.gz"
+	sudo tar -C /usr/local -xzf go$(GO_VERSION).linux-amd64.tar.gz
+	rm go$(GO_VERSION).linux-amd64.tar.gz
+init-go:
+	echo 'export PATH=$$PATH:/usr/local/go/bin' >> $${HOME}/.bashrc
+	echo 'export PATH=$$PATH:$${HOME}/go/bin' >> $${HOME}/.bashrc
 build:
 	go build -o api main.go
 server:
@@ -12,5 +24,10 @@ check-format:
 	test -z $$(go fmt ./...)
 vet:
 	go vet ./...
+install-lint:
+	sudo curl -sSfL \
+	https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh\ | sh -s -- -b $$(go env GOPATH)/bin v1.55.2
+static-check:
+	golangci-lint run
 
-.PHONY: build server test coverage report check-format vet
+.PHONY: build server test coverage report check-format vet setup install-lint static-check install-go init-go
