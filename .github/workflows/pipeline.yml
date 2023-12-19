@@ -19,7 +19,7 @@ jobs:
       - name: Run Format Check
         run: make check-format
       - name: Vet
-        uses: make vet
+        run: make vet
   lint:
     name: Lint
     runs-on: ubuntu-latest
