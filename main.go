@@ -4,14 +4,15 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/djengua/rifa-api/faas"
+	"github.com/djengua/rifa-api/handlers"
 )
 
 func main() {
 	addr := ":8080"
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/hello", faas.Translate)
+	mux.HandleFunc("/hello", handlers.TranslateHandler)
+	mux.HandleFunc("/health", handlers.HealthCheck)
 	log.Printf("listening on %s\n", addr)
 	log.Fatal(http.ListenAndServe(addr, mux))
 }
