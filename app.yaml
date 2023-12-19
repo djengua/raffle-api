@@ -1,5 +1,4 @@
 runtime: go121
-main: ./cmd
 liveness_check:
   path: "/health"
   check_interval_sec: 30
