@@ -1,14 +1,19 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/djengua/rifa-api/handlers"
 )
 
 func main() {
-	addr := ":8080"
+	addr := fmt.Sprintf(":%s", os.Getenv("PORT"), "error")
+	if addr == ":" {
+		addr = ":8080"
+	}
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/hello", handlers.TranslateHandler)
