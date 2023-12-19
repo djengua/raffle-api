@@ -10,4 +10,7 @@ report:
 	go tool cover -html=coverage.out -o cover.html
 check-format:
 	test -z $$(go fmt ./...)
-.PHONY: build server test coverage report
+vet:
+	go vet ./...
+
+.PHONY: build server test coverage report check-format vet
