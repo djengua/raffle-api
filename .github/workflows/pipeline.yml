@@ -1,12 +1,17 @@
 name: CI Checks
 
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - main
 
 jobs:
   test:
+    needs:
+      - format-check
     name: Test Application
     runs-on: ubuntu-latest
     steps:
@@ -87,24 +92,38 @@ jobs:
         with:
           name: api
           path: artifacts
-  deploy-paas:
-    name: Deploy PaaS
+  format-check:
+    name: Check formatting
     runs-on: ubuntu-latest
-    needs: test
     steps:
-      - name: Check out cod einto the Go module directory
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.2
+      - name: Check out code into the Go module directory
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - id: auth
-        uses: google-github-actions/auth@v2
-        with:
-          project_id: djengua-203420
-          credentials_json: ${{ secrets.GCP_CREDENTIALS_2 }}
-          export_default_credentials: true
-      - id: deploy
-        uses: google-github-actions/deploy-appengine@v1
-        with:
-          creedentials: ${{ secrets.GCP_CREDENTIALS_2 }}
-      - id: test
-        run: curl "${{ steps.deploy.outputs.url }}/hello"
+      - name: Run Format Check
+        run: make check-format
+
+  # deploy-paas:
+
+  #   name: Deploy PaaS
+  #   runs-on: ubuntu-latest
+  #   needs: test
+  #   steps:
+  #     - name: Check out cod einto the Go module directory
+  #       uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 0
+  #     - id: auth
+  #       uses: google-github-actions/auth@v2
+  #       with:
+  #         project_id: djengua-203420
+  #         credentials_json: ${{ secrets.GCP_CREDENTIALS_2 }}
+  #         export_default_credentials: true
+  #     - id: deploy
+  #       uses: google-github-actions/deploy-appengine@v1
+  #       with:
+  #         creedentials: ${{ secrets.GCP_CREDENTIALS_2 }}
+  #     - id: test
+  #       run: curl "${{ steps.deploy.outputs.url }}/hello"
