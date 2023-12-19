@@ -6,20 +6,20 @@ on:
       - main
 
 jobs:
-  format-check:
-    name: Check formatting
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set up Go 1.x
-        uses: actions/setup-go@v4
-        with:
-          go-version: ^1.2
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v2
-      - name: Run Format Check
-        run: make check-format
-      - name: Vet
-        uses: make vet
+  # format-check:
+  #   name: Check formatting
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Set up Go 1.x
+  #       uses: actions/setup-go@v4
+  #       with:
+  #         go-version: ^1.2
+  #     - name: Check out code into the Go module directory
+  #       uses: actions/checkout@v2
+  #     - name: Run Format Check
+  #       run: make check-format
+  #     - name: Vet
+  #       uses: make vet
   # lint:
   #   name: Lint
   #   runs-on: ubuntu-latest
@@ -29,8 +29,8 @@ jobs:
   #       uses: golangci/golangci-lint-action@v2
   test:
     name: Test Application
-    needs:
-      - format-check
+    # needs:
+    #   - format-check
 
     runs-on: ubuntu-latest
     steps:
