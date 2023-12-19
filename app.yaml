@@ -1,4 +1,4 @@
-runtime: go12
+runtime: go121
 main: ./cmd
 liveness_check:
   path: "/health"
