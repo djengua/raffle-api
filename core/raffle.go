@@ -93,11 +93,9 @@ func (r *Raffle) PrintParticipants() {
 
 func (r *Raffle) Prepare() {
 	r.Tickets = []string{}
-	// fmt.Println("preparing tickets of all participants...")
 	for _, p := range r.Participants {
 		r.Tickets = append(r.Tickets, p.Tickets...)
 	}
-	// fmt.Printf("total of tickets: %d \n", len(r.Tickets))
 }
 
 func (r *Raffle) DeleteParticipant(name string) error {
