@@ -26,7 +26,7 @@ vet:
 	go vet ./...
 install-lint:
 	sudo curl -sSfL \
-	https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh\ | sh -s -- -b $$(go env GOPATH)/bin v1.55.2
+	https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $$(go env GOPATH)/bin v1.55.2
 static-check:
 	golangci-lint run
 
