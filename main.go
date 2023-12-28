@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/djengua/raffle-api/api"
+	coreapi "github.com/djengua/raffle-api/core-api"
 	"github.com/djengua/raffle-api/util"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -33,7 +33,7 @@ func main() {
 
 	database := client.Database(config.DbName)
 
-	server, err := api.NewServer(config, database)
+	server, err := coreapi.NewServer(config, database)
 	if err != nil {
 		log.Fatal("Cannot create server: ", err)
 	}
