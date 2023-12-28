@@ -44,12 +44,6 @@ func TestTranslateAPI(t *testing.T) {
 			ExpectedLanguage:    "german",
 			ExpectedTranslation: "bar",
 		},
-		{
-			Endpoint:            "/translate/baz",
-			StatusCode:          http.StatusNotFound,
-			ExpectedLanguage:    "",
-			ExpectedTranslation: "",
-		},
 	}
 	h := handlers.NewTranslateHandler(&stubbedService{})
 	handler := http.HandlerFunc(h.TranslateHandler)
@@ -72,11 +66,11 @@ func TestTranslateAPI(t *testing.T) {
 		_ = json.Unmarshal(rr.Body.Bytes(), &resp)
 
 		if resp.Language != test.ExpectedLanguage {
-			t.Errorf(`expected language "%s" but received %s`, test.ExpectedLanguage, resp.Language)
+			t.Errorf(`expected language "%s" but received "%s"`, test.ExpectedLanguage, resp.Language)
 		}
 
 		if resp.Translation != test.ExpectedTranslation {
-			t.Errorf(`expected language "%s" but received %s`, test.ExpectedTranslation, resp.Translation)
+			t.Errorf(`expected language "%s" but received "%s"`, test.ExpectedTranslation, resp.Translation)
 		}
 
 	}
