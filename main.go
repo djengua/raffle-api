@@ -1,28 +1,51 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
-	"net/http"
-	"os"
 
-	"github.com/djengua/rifa-api/handlers"
+	"github.com/djengua/rifa-api/api"
+	"github.com/djengua/rifa-api/util"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// var collection *mongo.Collection
+var ctx = context.TODO()
+
+// func init() {
+
+// }
+
 func main() {
-	addr := fmt.Sprintf(":%s", os.Getenv("PORT"))
-	if addr == ":" {
-		addr = ":8080"
+	config, err := util.LoadConfig(".")
+	if err != nil {
+		log.Fatal("cannot read config. ", err)
 	}
-	mux := http.NewServeMux()
 
-	mux.HandleFunc("/hello", handlers.TranslateHandler)
-	mux.HandleFunc("/health", handlers.HealthCheck)
-	log.Printf("listening on %s\n", addr)
-	log.Fatal(http.ListenAndServe(addr, mux))
-}
+	options := options.Client().ApplyURI(config.DBUri)
+	client, err := mongo.Connect(ctx, options)
 
-type Resp struct {
-	Language    string `json:"language"`
-	Translation string `json:"translation"`
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Ping to DB ...")
+	err = client.Ping(ctx, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	database := client.Database("raffleDB")
+
+	server, err := api.NewServer(config, database)
+	if err != nil {
+		log.Fatal("Cannot create server: ", err)
+	}
+
+	err = server.Start(config.ServerAddress)
+	if err != nil {
+		log.Fatal("Cannot start server: ", err)
+	}
 }

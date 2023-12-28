@@ -9,6 +9,15 @@ import (
 	"github.com/djengua/rifa-api/handlers"
 )
 
+type stubbedService struct{}
+
+func (s *stubbedService) Translate(word string, language string) string {
+	if word == "foo" {
+		return "bar"
+	}
+	return ""
+}
+
 func TestTranslateAPI(t *testing.T) {
 	// Arrange
 	tt := []struct {
@@ -29,8 +38,23 @@ func TestTranslateAPI(t *testing.T) {
 			ExpectedLanguage:    "german",
 			ExpectedTranslation: "hallo",
 		},
+		{
+			Endpoint:            "/translate/foo?language=german",
+			StatusCode:          http.StatusOK,
+			ExpectedLanguage:    "german",
+			ExpectedTranslation: "bar",
+		},
+		{
+			Endpoint:            "/translate/baz",
+			StatusCode:          http.StatusNotFound,
+			ExpectedLanguage:    "",
+			ExpectedTranslation: "",
+		},
 	}
-	handler := http.HandlerFunc(handlers.TranslateHandler)
+	h := handlers.NewTranslateHandler(&stubbedService{})
+	handler := http.HandlerFunc(h.TranslateHandler)
+	// underTest := handlers.NewTranslateHandler(translation.NewStaticService())
+	// handler := http.HandlerFunc(underTest.TranslateHandler)
 
 	// Act
 	for _, test := range tt {

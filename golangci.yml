@@ -1,6 +1,18 @@
 linters:
   enable:
     - gosec
+    - godot
+    - misspell
+    - stylecheck
+
+linters-settings:
+  stylecheck:
+    go: "1.2"
+    checks: ["all", "ST1*"]
+
+issues:
+  exclude-use-default. false
+
 output:
   format: colored-line-number
 
