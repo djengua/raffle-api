@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/djengua/rifa-api/api"
-	"github.com/djengua/rifa-api/util"
+	"github.com/djengua/raffle-api/api"
+	"github.com/djengua/raffle-api/util"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )

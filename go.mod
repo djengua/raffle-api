@@ -1,8 +1,9 @@
-module github.com/djengua/rifa-api
+module github.com/djengua/raffle-api
 
 go 1.20
 
 require (
+	github.com/djengua/rifa-api v0.0.0-20231228213319-27c5a4a512d6
 	github.com/gin-gonic/gin v1.9.1
 	github.com/spf13/viper v1.18.2
 	github.com/stretchr/testify v1.8.4

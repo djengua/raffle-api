@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/djengua/rifa-api/handlers"
+	"github.com/djengua/raffle-api/handlers"
 )
 
 type stubbedService struct{}
