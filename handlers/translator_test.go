@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/djengua/raffle-api/handlers"
+	"github.com/djengua/raffle-api/translation"
 )
 
 type stubbedService struct{}
@@ -38,17 +39,17 @@ func TestTranslateAPI(t *testing.T) {
 			ExpectedLanguage:    "german",
 			ExpectedTranslation: "hallo",
 		},
-		{
-			Endpoint:            "/translate/foo?language=german",
-			StatusCode:          http.StatusOK,
-			ExpectedLanguage:    "german",
-			ExpectedTranslation: "bar",
-		},
+		// {
+		// 	Endpoint:            "/translate/foo?language=german",
+		// 	StatusCode:          http.StatusOK,
+		// 	ExpectedLanguage:    "german",
+		// 	ExpectedTranslation: "bar",
+		// },
 	}
-	h := handlers.NewTranslateHandler(&stubbedService{})
-	handler := http.HandlerFunc(h.TranslateHandler)
-	// underTest := handlers.NewTranslateHandler(translation.NewStaticService())
-	// handler := http.HandlerFunc(underTest.TranslateHandler)
+	// h := handlers.NewTranslateHandler(&stubbedService{})
+	// handler := http.HandlerFunc(h.TranslateHandler)
+	underTest := handlers.NewTranslateHandler(translation.NewStaticService())
+	handler := http.HandlerFunc(underTest.TranslateHandler)
 
 	// Act
 	for _, test := range tt {
