@@ -11,14 +11,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// var collection *mongo.Collection
-var ctx = context.TODO()
-
-// func init() {
-
-// }
-
 func main() {
+	var ctx = context.TODO()
 	config, err := util.LoadConfig(".")
 	if err != nil {
 		log.Fatal("cannot read config. ", err)
@@ -37,7 +31,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	database := client.Database("raffleDB")
+	database := client.Database(config.DbName)
 
 	server, err := api.NewServer(config, database)
 	if err != nil {
