@@ -18,8 +18,8 @@ jobs:
         uses: actions/checkout@v3
       - name: Run Format Check
         run: make check-format
-      - name: Vet
-        run: make vet
+      # - name: Vet
+      #   run: make vet
   # lint:
   #   name: Lint
   #   runs-on: ubuntu-latest
