@@ -3,7 +3,7 @@ package translation_test
 import (
 	"testing"
 
-	"github.com/djengua/rifa-api/translation"
+	"github.com/djengua/raffle-api/translation"
 )
 
 func TestTranslate(t *testing.T) {

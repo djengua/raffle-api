@@ -3,7 +3,7 @@ package core_test
 import (
 	"testing"
 
-	"github.com/djengua/rifa-api/core"
+	"github.com/djengua/raffle-api/core"
 	"github.com/stretchr/testify/require"
 )
 
