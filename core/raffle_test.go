@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestRaffleAuto(t *testing.T) {
+func TestRaffleSelectWinner(t *testing.T) {
 	// Create new Raffle 3 turns, 5 boletos con 3 participantes , prize of 10
 
 	nameRaffle := util.RandomString(20)
@@ -113,7 +113,7 @@ func TestRaffleAuto(t *testing.T) {
 	require.Error(t, err)
 }
 
-func TestRaffle(t *testing.T) {
+func TestRaffleDiscardTicket(t *testing.T) {
 	nameRaffle := util.RandomString(20)
 	prizeRaffle := util.RandomString(10)
 
@@ -134,18 +134,18 @@ func TestRaffle(t *testing.T) {
 
 	err := raffle.AddParticipant(participantOne)
 	require.NoError(t, err)
-	_, err = raffle.AddTicketToParticipant("A-00001", true, participantOne.Name)
+	_, err = raffle.AddTicketToParticipant("A-00001", false, participantOne.Name)
 	require.NoError(t, err)
-	_, err = raffle.AddTicketToParticipant("A-00002", true, participantOne.Name)
+	_, err = raffle.AddTicketToParticipant("A-00002", false, participantOne.Name)
 	require.NoError(t, err)
 
 	err = raffle.AddParticipant(participantTwo)
 	require.NoError(t, err)
-	_, err = raffle.AddTicketToParticipant("A-00003", true, participantTwo.Name)
+	_, err = raffle.AddTicketToParticipant("A-00003", false, participantTwo.Name)
 	require.NoError(t, err)
-	_, err = raffle.AddTicketToParticipant("A-00004", true, participantTwo.Name)
+	_, err = raffle.AddTicketToParticipant("A-00004", false, participantTwo.Name)
 	require.NoError(t, err)
-	_, err = raffle.AddTicketToParticipant("A-00005", true, participantTwo.Name)
+	_, err = raffle.AddTicketToParticipant("A-00005", false, participantTwo.Name)
 	require.NoError(t, err)
 
 	_, err = raffle.DiscardTicket()

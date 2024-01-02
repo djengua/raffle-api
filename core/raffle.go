@@ -143,8 +143,7 @@ func deleteParticipantAtIndex(participants []Participant, index int) ([]Particip
 }
 
 func (r *Raffle) SelectWinner() error {
-	r.Log = append(r.Log, "preparing all tickets.")
-	r.Prepare()
+	// r.Log = append(r.Log, "preparing all tickets.")
 	r.Log = append(r.Log, fmt.Sprintf("total of tickets: %d", len(r.Tickets)))
 	if !r.Open {
 		return errors.New(util.RAFFLE_IS_CLOSED)
@@ -193,10 +192,9 @@ func (r *Raffle) SelectWinner() error {
 }
 
 func (r *Raffle) DiscardTicket() (string, error) {
-	r.Prepare()
-
 	if len(r.Tickets) == 1 {
 		ticketTaken := r.Tickets[0]
+		r.Open = false
 		fmt.Printf(" The ticket winner is: '%s' \n", ticketTaken)
 		r.Log = append(r.Log, fmt.Sprintf("The ticket winner is: '%s'", ticketTaken))
 
@@ -213,10 +211,12 @@ func (r *Raffle) DiscardTicket() (string, error) {
 	}
 
 	i := rand.Intn(len(r.Tickets))
+
 	newSlice, ticketTaken, err := deleteTicketAtIndex(r.Tickets, i)
 	if err != nil {
 		return "", err
 	}
+
 	fmt.Printf(" Discard: %s \n", ticketTaken)
 	r.Log = append(r.Log, fmt.Sprintf(" Discard: %s", ticketTaken))
 	r.Tickets = newSlice

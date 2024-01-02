@@ -1,6 +1,7 @@
 package coreapi
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -179,6 +180,11 @@ func (s *Server) addParticipant(ctx *gin.Context) {
 		return
 	}
 
+	if req.Participant.Name == "" {
+		ctx.JSON(http.StatusBadRequest, errorResponse(errors.New("participant name is required")))
+		return
+	}
+
 	raffle.AddParticipant(req.Participant)
 	err = s.update(ctx, &raffle)
 
@@ -271,13 +277,13 @@ func (s *Server) deleteParticipant(ctx *gin.Context) {
 }
 
 func (s *Server) winner(ctx *gin.Context) {
-	var req GetRaffleByIdRequest
-	if err := ctx.ShouldBindUri(&req); err != nil {
+	var req RaffleByIdRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
-	raffle, err := s.fetchById(ctx, req.Id)
+	raffle, err := s.fetchById(ctx, req.RaffleId)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
