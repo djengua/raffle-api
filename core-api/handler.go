@@ -250,7 +250,6 @@ func (s *Server) deleteParticipant(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-	// TODO: Eliminar por id
 
 	raffle, err := s.fetchById(ctx, req.RaffleID)
 	if err != nil {
@@ -321,6 +320,10 @@ func (s *Server) discardTicket(ctx *gin.Context) {
 	}
 
 	ticket, err := raffle.DiscardTicket()
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
 
 	err = s.update(ctx, &raffle)
 	if err != nil {
@@ -330,6 +333,9 @@ func (s *Server) discardTicket(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, map[string]interface{}{
 		"error": nil,
-		"data":  ticket,
+		"data": map[string]interface{}{
+			"ticket": ticket,
+			"data":   raffle,
+		},
 	})
 }
