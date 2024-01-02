@@ -4,24 +4,27 @@ import (
 	"testing"
 
 	"github.com/djengua/raffle-api/core"
+	"github.com/djengua/raffle-api/util"
 	"github.com/stretchr/testify/require"
 )
 
-func TestRaffle(t *testing.T) {
-	// Create new Raffle 3 turns, 5 boletos con 3 participantes , prize of 100
+func TestRaffleSelectWinner(t *testing.T) {
+	// Create new Raffle 3 turns, 5 boletos con 3 participantes , prize of 10
+
+	nameRaffle := util.RandomString(20)
+	prizeRaffle := util.RandomString(10)
 
 	raffle := core.Raffle{
-		Name:       "Rifa de fin de año",
-		Prize:      "100 pesos",
-		Turns:      20,
+		Name:       nameRaffle,
+		Prize:      prizeRaffle,
+		Turns:      3,
 		MaxTickets: 10,
 		Open:       true,
 	}
 
-	// require.Equal(t, test.Expected, result)
-	require.Equal(t, "Rifa de fin de año", raffle.Name)
-	require.Equal(t, "100 pesos", raffle.Prize)
-	require.Equal(t, 20, raffle.Turns)
+	require.Equal(t, nameRaffle, raffle.Name)
+	require.Equal(t, prizeRaffle, raffle.Prize)
+	require.Equal(t, 3, raffle.Turns)
 
 	// Add participants
 	participantOne := core.Participant{Name: "David J"}
@@ -88,14 +91,14 @@ func TestRaffle(t *testing.T) {
 	err = raffle.DeleteParticipant("David F")
 	require.Error(t, err)
 	_ = raffle.DeleteParticipant("David J")
-	require.Equal(t, 3, len(raffle.Participants))
+	require.Equal(t, 4, len(raffle.Participants))
 	raffle.PrintParticipants()
 
 	// raffle.Prepare()
 	// require.Equal(t, 8, len(raffle.Tickets))
 
 	// // passing 3 turns,
-	require.Equal(t, 3, len(raffle.Participants))
+	require.Equal(t, 4, len(raffle.Participants))
 
 	err = raffle.SelectWinner()
 	require.NoError(t, err)
@@ -108,4 +111,51 @@ func TestRaffle(t *testing.T) {
 	addedTicket, err = raffle.AddTicketToParticipant("", true, participantFour.Name)
 	require.Equal(t, false, addedTicket)
 	require.Error(t, err)
+}
+
+func TestRaffleDiscardTicket(t *testing.T) {
+	nameRaffle := util.RandomString(20)
+	prizeRaffle := util.RandomString(10)
+
+	raffle := core.Raffle{
+		Name:       nameRaffle,
+		Prize:      prizeRaffle,
+		Turns:      3,
+		MaxTickets: 10,
+		Open:       true,
+	}
+
+	require.Equal(t, nameRaffle, raffle.Name)
+	require.Equal(t, prizeRaffle, raffle.Prize)
+	require.Equal(t, 3, raffle.Turns)
+
+	participantOne := core.Participant{Name: "Karen"}
+	participantTwo := core.Participant{Name: "Eliott"}
+
+	err := raffle.AddParticipant(participantOne)
+	require.NoError(t, err)
+	_, err = raffle.AddTicketToParticipant("A-00001", false, participantOne.Name)
+	require.NoError(t, err)
+	_, err = raffle.AddTicketToParticipant("A-00002", false, participantOne.Name)
+	require.NoError(t, err)
+
+	err = raffle.AddParticipant(participantTwo)
+	require.NoError(t, err)
+	_, err = raffle.AddTicketToParticipant("A-00003", false, participantTwo.Name)
+	require.NoError(t, err)
+	_, err = raffle.AddTicketToParticipant("A-00004", false, participantTwo.Name)
+	require.NoError(t, err)
+	_, err = raffle.AddTicketToParticipant("A-00005", false, participantTwo.Name)
+	require.NoError(t, err)
+
+	_, err = raffle.DiscardTicket()
+	require.NoError(t, err)
+	_, err = raffle.DiscardTicket()
+	require.NoError(t, err)
+	_, err = raffle.DiscardTicket()
+	require.NoError(t, err)
+	_, err = raffle.DiscardTicket()
+	require.NoError(t, err)
+	_, err = raffle.DiscardTicket()
+	require.NoError(t, err)
 }

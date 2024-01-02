@@ -1,6 +1,7 @@
 package coreapi
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -162,8 +163,8 @@ func (s *Server) update(ctx *gin.Context, raffle *core.Raffle) error {
 }
 
 type AddParticipantRaffleRequest struct {
-	RaffleID        string `json:"raffle_id" binding:"required"`
-	ParticipantName string `json:"participant_name" binding:"required"`
+	RaffleID    string           `json:"raffle_id" binding:"required"`
+	Participant core.Participant `json:"participant" binding:"required"`
 }
 
 func (s *Server) addParticipant(ctx *gin.Context) {
@@ -179,9 +180,12 @@ func (s *Server) addParticipant(ctx *gin.Context) {
 		return
 	}
 
-	raffle.AddParticipant(core.Participant{ID: primitive.NewObjectID(), Name: req.ParticipantName})
-	fmt.Println(raffle.ToString())
+	if req.Participant.Name == "" {
+		ctx.JSON(http.StatusBadRequest, errorResponse(errors.New("participant name is required")))
+		return
+	}
 
+	raffle.AddParticipant(req.Participant)
 	err = s.update(ctx, &raffle)
 
 	if err != nil {
@@ -235,12 +239,13 @@ func (s *Server) addTicketToParticipant(ctx *gin.Context) {
 }
 
 type DeleteParticipantRaffleRequest struct {
-	RaffleID        string `json:"raffle_id" binding:"required"`
-	ParticipantName string `json:"participant_name" binding:"required"`
+	RaffleID string `json:"raffle_id" binding:"required"`
+	// Participant core.Participant `json:"participant" binding:"required"`
+	ParticipantId string `json:"participant_id" binding:"required"`
 }
 
 func (s *Server) deleteParticipant(ctx *gin.Context) {
-	var req AddParticipantRaffleRequest
+	var req DeleteParticipantRaffleRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
@@ -253,13 +258,11 @@ func (s *Server) deleteParticipant(ctx *gin.Context) {
 		return
 	}
 
-	err = raffle.DeleteParticipant(req.ParticipantName)
+	err = raffle.DeleteParticipant(req.ParticipantId)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-
-	fmt.Println(raffle.ToString())
 
 	err = s.update(ctx, &raffle)
 	if err != nil {
@@ -274,21 +277,19 @@ func (s *Server) deleteParticipant(ctx *gin.Context) {
 }
 
 func (s *Server) winner(ctx *gin.Context) {
-	var req GetRaffleByIdRequest
-	if err := ctx.ShouldBindUri(&req); err != nil {
+	var req RaffleByIdRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
-	raffle, err := s.fetchById(ctx, req.Id)
+	raffle, err := s.fetchById(ctx, req.RaffleId)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
 	raffle.SelectWinner()
-
-	fmt.Println(raffle.ToString())
 
 	err = s.update(ctx, &raffle)
 	if err != nil {
@@ -299,5 +300,36 @@ func (s *Server) winner(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, map[string]interface{}{
 		"error": nil,
 		"data":  raffle,
+	})
+}
+
+type RaffleByIdRequest struct {
+	RaffleId string `json:"raffle_id" binding:"required"`
+}
+
+func (s *Server) discardTicket(ctx *gin.Context) {
+	var req RaffleByIdRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	raffle, err := s.fetchById(ctx, req.RaffleId)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	ticket, err := raffle.DiscardTicket()
+
+	err = s.update(ctx, &raffle)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, map[string]interface{}{
+		"error": nil,
+		"data":  ticket,
 	})
 }

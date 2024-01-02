@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"math/rand"
 
+	"github.com/djengua/raffle-api/util"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/exp/slices"
 )
 
 func (r *Raffle) AddParticipant(newParticipant Participant) error {
 	if !r.Open {
-		return errors.New("the raffle is closed")
+		return errors.New(util.RAFFLE_IS_CLOSED)
 	}
 
 	if len(r.Participants) == 0 {
@@ -24,7 +25,7 @@ func (r *Raffle) AddParticipant(newParticipant Participant) error {
 
 	for i := 0; i < len(r.Participants); i++ {
 		if r.Participants[i].Name == newParticipant.Name || r.Participants[i].ID == newParticipant.ID {
-			return errors.New("participant duplicated")
+			return errors.New(util.PARTICIPANT_DUPLICATED)
 		}
 	}
 
@@ -56,15 +57,15 @@ func (r *Raffle) existTicket(ticket string) bool {
 
 func (r *Raffle) AddTicketToParticipant(ticketSelected string, isRandom bool, participant string) (bool, error) {
 	if !r.Open {
-		return false, errors.New("the raffle is closed")
+		return false, errors.New(util.RAFFLE_IS_CLOSED)
 	}
 
 	if ticketSelected == "" && !isRandom {
-		return false, errors.New("cannot add ticket void")
+		return false, errors.New(util.CANNOT_ADD_TICKET_VOID)
 	}
 
 	if len(r.Tickets) >= r.MaxTickets {
-		return false, errors.New("cannot add more tickets")
+		return false, errors.New(util.CANNOT_ADD_MORE_TICKETS)
 	}
 
 	for i := 0; i < len(r.Participants); i++ {
@@ -98,14 +99,14 @@ func (r *Raffle) Prepare() {
 	}
 }
 
-func (r *Raffle) DeleteParticipant(name string) error {
+func (r *Raffle) DeleteParticipant(id string) error {
 	if !r.Open {
 		return errors.New("the raffle is closed")
 	}
 	index := -1
 
 	for i := 0; i < len(r.Participants); i++ {
-		if r.Participants[i].Name == name {
+		if r.Participants[i].ID.String() == id {
 			index = i
 			break
 		}
@@ -142,11 +143,10 @@ func deleteParticipantAtIndex(participants []Participant, index int) ([]Particip
 }
 
 func (r *Raffle) SelectWinner() error {
-	r.Log = append(r.Log, "preparing all tickets.")
-	r.Prepare()
+	// r.Log = append(r.Log, "preparing all tickets.")
 	r.Log = append(r.Log, fmt.Sprintf("total of tickets: %d", len(r.Tickets)))
 	if !r.Open {
-		return errors.New("the raffle is closed")
+		return errors.New(util.RAFFLE_IS_CLOSED)
 	}
 
 	r.Open = false
@@ -186,7 +186,40 @@ func (r *Raffle) SelectWinner() error {
 		r.Tickets = newSlice
 	}
 
-	fmt.Println("  Non-winning Tickets ")
+	fmt.Println("Non-winning Tickets ")
 	fmt.Println(r.Tickets)
 	return nil
+}
+
+func (r *Raffle) DiscardTicket() (string, error) {
+	if len(r.Tickets) == 1 {
+		ticketTaken := r.Tickets[0]
+		r.Open = false
+		fmt.Printf(" The ticket winner is: '%s' \n", ticketTaken)
+		r.Log = append(r.Log, fmt.Sprintf("The ticket winner is: '%s'", ticketTaken))
+
+		for i := 0; i < len(r.Participants); i++ {
+			if slices.Contains(r.Participants[i].Tickets, ticketTaken) {
+				r.Winner = r.Participants[i]
+				r.TicketWinner = ticketTaken
+				fmt.Printf(" The participant winner is: '%s' \n", r.Participants[i].Name)
+				r.Log = append(r.Log, fmt.Sprintf("The participant winner is: '%s'", r.Participants[i].Name))
+				break
+			}
+		}
+		return ticketTaken, nil
+	}
+
+	i := rand.Intn(len(r.Tickets))
+
+	newSlice, ticketTaken, err := deleteTicketAtIndex(r.Tickets, i)
+	if err != nil {
+		return "", err
+	}
+
+	fmt.Printf(" Discard: %s \n", ticketTaken)
+	r.Log = append(r.Log, fmt.Sprintf(" Discard: %s", ticketTaken))
+	r.Tickets = newSlice
+
+	return ticketTaken, nil
 }

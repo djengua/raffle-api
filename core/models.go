@@ -9,8 +9,8 @@ import (
 
 type Participant struct {
 	ID      primitive.ObjectID `json:"id" bson:"_id"`
-	Name    string             `json:"name"`
-	Tickets []string           `json:"tickets"`
+	Name    string             `json:"name" bson:"name"`
+	Tickets []string           `json:"tickets" bson:"tickets"`
 }
 
 type Raffle struct {
