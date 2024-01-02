@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  mongodb:
+    image: mongo
+    environment:
+      - DB_NAME=raffleDB
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      - DB_URI=mongodb://raffle-api-mongodb-1:27017
+    depends_on:
+      - mongodb
+    command: ["/app/api"]

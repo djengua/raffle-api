@@ -38,8 +38,9 @@ func (s *Server) setupRouter() {
 	router.PUT("/raffle/add-participant", s.addParticipant)
 	router.PUT("/raffle/add-ticket-to-participant", s.addTicketToParticipant)
 	router.PUT("/raffle/delete-participant", s.deleteParticipant)
-	router.POST("/raffle/winner/:id", s.winner)
 
+	router.POST("/raffle/discard-ticket", s.discardTicket)
+	router.POST("/raffle/winner", s.winner)
 	s.router = router
 }
 

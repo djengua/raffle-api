@@ -10,14 +10,14 @@ import (
 	"github.com/djengua/raffle-api/translation"
 )
 
-type stubbedService struct{}
+// type stubbedService struct{}
 
-func (s *stubbedService) Translate(word string, language string) string {
-	if word == "foo" {
-		return "bar"
-	}
-	return ""
-}
+// func (s *stubbedService) Translate(word string, language string) string {
+// 	if word == "foo" {
+// 		return "bar"
+// 	}
+// 	return ""
+// }
 
 func TestTranslateAPI(t *testing.T) {
 	// Arrange
