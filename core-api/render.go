@@ -1,47 +1,51 @@
 package coreapi
 
 import (
-	"log"
 	"net/http"
 
-	"github.com/CloudyKit/jet/v6"
+	"github.com/djengua/raffle-api/core"
+	"github.com/gin-gonic/gin"
 )
 
-var views = jet.NewSet(
-	jet.NewOSFileSystemLoader("./templates"),
-	jet.InDevelopmentMode(),
-)
-
-func HomePage(w http.ResponseWriter, r http.Request) {
-	err := renderPage(w, "home", nil)
-	if err != nil {
-		log.Println(err)
-	}
+func (s *Server) homePage(ctx *gin.Context) {
+	ctx.HTML(http.StatusOK, "home.html", gin.H{
+		"title":   "Home Page",
+		"message": "Hello World",
+	})
 }
 
-// func (s *Server) homePage(ctx *gin.Context) {
-// 	raffle, err := s.fetchAll(ctx)
-// 	if err != nil {
-// 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
-// 		return
-// 	}
+func (s *Server) TicketSuggest(ctx *gin.Context) {
 
-// 	ctx.JSON(http.StatusOK, map[string]interface{}{
-// 		"error": nil,
-// 		"data":  raffle,
-// 	})
-// }
+	result3 := []string{}
+	result6 := []string{}
+	result9 := []string{}
 
-func renderPage(w http.ResponseWriter, tmpl string, data jet.VarMap) error {
-	view, err := views.GetTemplate(tmpl)
-	if err != nil {
-		log.Println(err)
-		return err
+	for i := 0; i < 3; i++ {
+		result3 = append(result3, core.TicketNumber(5))
 	}
-	err = view.Execute(w, data, nil)
-	if err != nil {
-		log.Println(err)
-		return err
+	for i := 0; i < 6; i++ {
+		result6 = append(result6, core.TicketNumber(5))
 	}
-	return nil
+	for i := 0; i < 9; i++ {
+		result9 = append(result9, core.TicketNumber(5))
+	}
+
+	ctx.JSON(http.StatusOK, map[string]interface{}{
+		"error": nil,
+		"data": map[string]interface{}{
+			"result3": result3,
+			"result6": result6,
+			"result9": result9,
+		},
+	})
+}
+
+func (s *Server) MelSuggest(ctx *gin.Context) {
+
+	result := core.MelGenerator(6)
+
+	ctx.JSON(http.StatusOK, map[string]interface{}{
+		"error": nil,
+		"data":  result,
+	})
 }

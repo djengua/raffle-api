@@ -134,6 +134,7 @@ func (s *Server) getAllRaffle(ctx *gin.Context) {
 		"error": nil,
 		"data":  raffle,
 	})
+
 }
 
 func (s *Server) update(ctx *gin.Context, raffle *core.Raffle) error {
@@ -163,8 +164,8 @@ func (s *Server) update(ctx *gin.Context, raffle *core.Raffle) error {
 }
 
 type AddParticipantRaffleRequest struct {
-	RaffleID    string           `json:"raffle_id" binding:"required"`
-	Participant core.Participant `json:"participant" binding:"required"`
+	RaffleID    string                 `json:"raffle_id" binding:"required"`
+	Participant core.RaffleParticipant `json:"participant" binding:"required"`
 }
 
 func (s *Server) addParticipant(ctx *gin.Context) {

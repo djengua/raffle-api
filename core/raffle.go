@@ -10,13 +10,13 @@ import (
 	"golang.org/x/exp/slices"
 )
 
-func (r *Raffle) AddParticipant(newParticipant Participant) error {
+func (r *Raffle) AddParticipant(newParticipant RaffleParticipant) error {
 	if !r.Open {
 		return errors.New(util.RAFFLE_IS_CLOSED)
 	}
 
 	if len(r.Participants) == 0 {
-		r.Participants = []Participant{}
+		r.Participants = []RaffleParticipant{}
 	}
 
 	if newParticipant.ID == primitive.NilObjectID {
@@ -122,20 +122,20 @@ func (r *Raffle) DeleteParticipant(id string) error {
 
 // Get participant of slice of participants
 func deleteTicketAtIndex(tickets []string, index int) ([]string, string, error) {
-	if index > len(tickets) {
-		return nil, "", errors.New("index is greater than to total of tickets")
-	}
+	// if index > len(tickets) {
+	// 	return nil, "", errors.New("index is greater than to total of tickets")
+	// }
 	p := tickets[index]
 	return append(tickets[:index], tickets[index+1:]...), p, nil
 }
 
-func deleteParticipantAtIndex(participants []Participant, index int) ([]Participant, Participant, error) {
+func deleteParticipantAtIndex(participants []RaffleParticipant, index int) ([]RaffleParticipant, RaffleParticipant, error) {
 	if index > len(participants) {
-		return nil, Participant{}, errors.New("index is greater than to total of participants")
+		return nil, RaffleParticipant{}, errors.New("index is greater than to total of participants")
 	}
 
 	if index < 0 {
-		return nil, Participant{}, errors.New("not found participant")
+		return nil, RaffleParticipant{}, errors.New("not found participant")
 	}
 
 	p := participants[index]
@@ -151,20 +151,20 @@ func (r *Raffle) SelectWinner() error {
 
 	r.Open = false
 
-	if r.Turns > len(r.Tickets) {
-		fmt.Println("The turns is greater than total of tickets, redim to -1.")
-		r.Turns = len(r.Tickets)
-	}
+	// if r.Turns > len(r.Tickets) {
+	// 	fmt.Println("The turns is greater than total of tickets, redim to -1.")
+	// 	r.Turns = len(r.Tickets)
+	// }
 
 	for turn := 0; turn < int(r.Turns); turn++ {
 		r.Log = append(r.Log, " Stirring and taking a ticket. ")
 		// Obtenemos random de los tickets
 		i := rand.Intn(len(r.Tickets))
-		newSlice, ticketTaken, err := deleteTicketAtIndex(r.Tickets, i)
+		newSlice, ticketTaken, _ := deleteTicketAtIndex(r.Tickets, i)
 
-		if err != nil {
-			panic(err)
-		}
+		// if err != nil {
+		// 	panic(err)
+		// }
 
 		if turn == int(r.Turns)-1 {
 			fmt.Printf(" The ticket winner is: '%s' \n", ticketTaken)
