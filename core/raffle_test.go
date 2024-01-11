@@ -130,6 +130,8 @@ func TestRaffleDiscardTicket(t *testing.T) {
 	require.Equal(t, prizeRaffle, raffle.Prize)
 	require.Equal(t, 3, raffle.Turns)
 
+	raffle.ToString()
+
 	participantOne := core.RaffleParticipant{}
 	participantOne.Name = "Karen"
 	// participantTwo := core.RaffleParticipant{}

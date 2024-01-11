@@ -4,14 +4,15 @@ import (
 	"fmt"
 
 	"github.com/djengua/raffle-api/util"
+	"github.com/djengua/token"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Server struct {
-	database *mongo.Database
-	router   *gin.Engine
-	// routerGin   *gin.Engine
+	database   *mongo.Database
+	router     *gin.Engine
+	tokenMaker token.Maker
 
 	config util.Config
 }
@@ -37,8 +38,16 @@ func (s *Server) setupRouter() {
 	go ListenToWebSocketChannel()
 
 	router.GET("/hello", s.hello)
+	router.GET("/", s.homePage)
+	router.GET("/ticket-suggestion", s.TicketSuggest)
+	router.GET("/mel-suggestion", s.MelSuggest)
+	router.GET("/ws", s.WebSocketEndpoint)
 
-	router.GET("/raffle/all", s.getAllRaffle)
+	authRoutes := router.Group("/").Use(authMiddleware(s.tokenMaker))
+
+	authRoutes.GET("/raffle/all", s.getAllRaffle)
+	// router.GET("/raffle/all", s.getAllRaffle)
+
 	router.POST("/raffle", s.createRaffle)
 	router.GET("/raffle/:id", s.getRaffleById)
 	router.PUT("/raffle/add-participant", s.addParticipant)
@@ -47,11 +56,6 @@ func (s *Server) setupRouter() {
 
 	router.POST("/raffle/discard-ticket", s.discardTicket)
 	router.POST("/raffle/winner", s.winner)
-
-	router.GET("/", s.homePage)
-	router.GET("/ticket-suggestion", s.TicketSuggest)
-	router.GET("/mel-suggestion", s.MelSuggest)
-	router.GET("/ws", s.WebSocketEndpoint)
 
 	s.router = router
 }

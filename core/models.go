@@ -17,6 +17,11 @@ type RaffleParticipant struct {
 	Tickets     []string `json:"tickets" bson:"tickets"`
 }
 
+type Award struct {
+	Name  string `json:"name"`
+	Order int    `json:"order"`
+}
+
 type Raffle struct {
 	ID           primitive.ObjectID  `json:"id,omitempty" bson:"_id"`
 	Name         string              `json:"name" bson:"name"`
@@ -32,6 +37,7 @@ type Raffle struct {
 	Open         bool                `json:"open" bson:"open"`
 	Winner       RaffleParticipant   `json:"winner,omitempty" bson:"winner"`
 	TicketWinner string              `json:"ticket_winner,omitempty" bson:"ticket_winner"`
+	StartDate    time.Time           `json:"start_date" bson:"start_date"`
 }
 
 func (r *Raffle) ToString() string {
@@ -39,6 +45,7 @@ func (r *Raffle) ToString() string {
 }
 
 type TandaParticipant struct {
+	Order       int `json:"order"`
 	Participant `json:"participants" bson:"participants"`
 	Numbers     []int `json:"numbers" bson:"numbers"`
 }
