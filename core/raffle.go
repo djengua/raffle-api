@@ -210,6 +210,11 @@ func (r *Raffle) DiscardTicket() (string, error) {
 		return ticketTaken, nil
 	}
 
+	fmt.Println("len(r.Tickets)")
+	fmt.Println(len(r.Tickets))
+	if len(r.Tickets) == 0 {
+		return "", errors.New("all tickets were taken")
+	}
 	i := rand.Intn(len(r.Tickets))
 
 	newSlice, ticketTaken, err := deleteTicketAtIndex(r.Tickets, i)

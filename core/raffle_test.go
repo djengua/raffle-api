@@ -178,7 +178,7 @@ func TestRaffleErrors(t *testing.T) {
 
 	require.Equal(t, nameRaffle, raffle.Name)
 	require.Equal(t, prizeRaffle, raffle.Prize)
-	require.Equal(t, 3, raffle.Turns)
+	require.Equal(t, 10, raffle.Turns)
 
 	participantOne := core.RaffleParticipant{}
 	participantOne.Name = "Karen"
@@ -198,7 +198,6 @@ func TestRandomNumber(t *testing.T) {
 	require.LessOrEqual(t, result, 99999)
 
 	resultStr := core.TicketNumber(5)
-	fmt.Println(resultStr)
 	require.NotEmpty(t, resultStr)
 
 	resultMel := core.MelGenerator(3)

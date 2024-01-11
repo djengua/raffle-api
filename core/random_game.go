@@ -37,9 +37,9 @@ func MelGenerator(turns int) []int {
 		for i := 0; i < 6; i++ {
 			rn := RandomNumber(50, false)
 			for slices.Contains(mel, rn) {
-				fmt.Printf("%d duplicated ", rn)
+				// fmt.Printf("%d duplicated ", rn)
 				rn = RandomNumber(50, false)
-				fmt.Printf("%d new \n", rn)
+				// fmt.Printf("%d new \n", rn)
 			}
 			mel = append(mel, rn)
 		}

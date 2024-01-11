@@ -36,10 +36,12 @@ func main() {
 	server, err := coreapi.NewServer(config, database)
 	if err != nil {
 		log.Fatal("Cannot create server: ", err)
+		client.Disconnect(ctx)
 	}
 
 	err = server.Start(config.ServerAddress)
 	if err != nil {
 		log.Fatal("Cannot start server: ", err)
+		client.Disconnect(ctx)
 	}
 }

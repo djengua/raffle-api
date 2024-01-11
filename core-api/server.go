@@ -32,6 +32,9 @@ func NewServer(config util.Config, database *mongo.Database) (*Server, error) {
 func (s *Server) setupRouter() {
 	router := gin.Default()
 	router.LoadHTMLGlob("./templates/*")
+	// fileServer := http.FileServer(http.Dir("./static"))
+	router.Static("/static", "./static")
+	go ListenToWebSocketChannel()
 
 	router.GET("/hello", s.hello)
 
@@ -48,7 +51,7 @@ func (s *Server) setupRouter() {
 	router.GET("/", s.homePage)
 	router.GET("/ticket-suggestion", s.TicketSuggest)
 	router.GET("/mel-suggestion", s.MelSuggest)
-	router.GET("/ws", s.WsEndpoint)
+	router.GET("/ws", s.WebSocketEndpoint)
 
 	s.router = router
 }
