@@ -11,7 +11,9 @@ import (
 type Server struct {
 	database *mongo.Database
 	router   *gin.Engine
-	config   util.Config
+	// routerGin   *gin.Engine
+
+	config util.Config
 }
 
 func NewServer(config util.Config, database *mongo.Database) (*Server, error) {
@@ -29,6 +31,10 @@ func NewServer(config util.Config, database *mongo.Database) (*Server, error) {
 
 func (s *Server) setupRouter() {
 	router := gin.Default()
+	router.LoadHTMLGlob("./templates/*")
+	// fileServer := http.FileServer(http.Dir("./static"))
+	router.Static("/static", "./static")
+	go ListenToWebSocketChannel()
 
 	router.GET("/hello", s.hello)
 
@@ -41,8 +47,22 @@ func (s *Server) setupRouter() {
 
 	router.POST("/raffle/discard-ticket", s.discardTicket)
 	router.POST("/raffle/winner", s.winner)
+
+	router.GET("/", s.homePage)
+	router.GET("/ticket-suggestion", s.TicketSuggest)
+	router.GET("/mel-suggestion", s.MelSuggest)
+	router.GET("/ws", s.WebSocketEndpoint)
+
 	s.router = router
 }
+
+// func (s *Server) setupRouterMux(){
+// 	r := mux.NewRouter()
+//     r.HandleFunc("/", HomeHandler)
+//     r.HandleFunc("/products", ProductsHandler)
+//     r.HandleFunc("/articles", ArticlesHandler)
+// 	s.router
+// }
 
 func (s *Server) Start(address string) error {
 	return s.router.Run(address)

@@ -134,6 +134,7 @@ func (s *Server) getAllRaffle(ctx *gin.Context) {
 		"error": nil,
 		"data":  raffle,
 	})
+
 }
 
 func (s *Server) update(ctx *gin.Context, raffle *core.Raffle) error {
@@ -163,8 +164,8 @@ func (s *Server) update(ctx *gin.Context, raffle *core.Raffle) error {
 }
 
 type AddParticipantRaffleRequest struct {
-	RaffleID    string           `json:"raffle_id" binding:"required"`
-	Participant core.Participant `json:"participant" binding:"required"`
+	RaffleID    string                 `json:"raffle_id" binding:"required"`
+	Participant core.RaffleParticipant `json:"participant" binding:"required"`
 }
 
 func (s *Server) addParticipant(ctx *gin.Context) {
@@ -250,7 +251,6 @@ func (s *Server) deleteParticipant(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-	// TODO: Eliminar por id
 
 	raffle, err := s.fetchById(ctx, req.RaffleID)
 	if err != nil {
@@ -321,6 +321,10 @@ func (s *Server) discardTicket(ctx *gin.Context) {
 	}
 
 	ticket, err := raffle.DiscardTicket()
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
 
 	err = s.update(ctx, &raffle)
 	if err != nil {
@@ -330,6 +334,9 @@ func (s *Server) discardTicket(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, map[string]interface{}{
 		"error": nil,
-		"data":  ticket,
+		"data": map[string]interface{}{
+			"ticket": ticket,
+			"data":   raffle,
+		},
 	})
 }

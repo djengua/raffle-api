@@ -1,0 +1,79 @@
+package coreapi
+
+import (
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
+	"github.com/stretchr/testify/require"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/integration/mtest"
+)
+
+func TestRaffleApi(t *testing.T) {
+	testCases := []struct {
+		name          string
+		method        string
+		url           string
+		buildStubs    func(mt *mtest.T) // db *mongo.Database)
+		checkResponse func(t *testing.T, recorder *httptest.ResponseRecorder)
+	}{
+		{
+			name:   "Create Raffle OK",
+			method: http.MethodGet,
+			url:    "",
+			buildStubs: func(mt *mtest.T) {
+				// Mock DB
+				mt.AddMockResponses(
+					bson.D{
+						{Key: "_id", Value: "659476407382de8dabcdb1e2"},
+						{Key: "name", Value: "Rifa de fin de año"},
+						{Key: "prize", Value: "1000 pesotes"},
+						{Key: "max_tickets", Value: 10},
+						{Key: "first_taken", Value: false},
+						{Key: "turns", Value: 10},
+						{Key: "tickets", Value: bson.TypeNull},
+						{Key: "createdAt", Value: "2024-01-02T14:46:56.422994-06:00"},
+						{Key: "updatedAt", Value: "2024-01-02T14:46:56.422994-06:00"},
+						{Key: "open", Value: true},
+					},
+				)
+
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusOK, recorder.Code)
+			},
+		},
+	}
+
+	for i := range testCases {
+		testCase := testCases[i]
+		t.Run(testCase.name, func(t *testing.T) {
+			mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
+
+			fmt.Println(mt.Client)
+			testCase.buildStubs(mt)
+
+			fmt.Println("build stup response mock ok")
+			server := newTestServer(t, mt.DB)
+			fmt.Println("server ok")
+			recorder := httptest.NewRecorder()
+
+			// tokenRepoImpl := token.NewRepo(mt.DB)
+
+			request, err := http.NewRequest(testCase.method, testCase.url, nil)
+			require.NoError(t, err)
+			server.router.ServeHTTP(recorder, request)
+			testCase.checkResponse(t, recorder)
+			// model, err := tokenRepoImpl.Find(context.TODO(), "12345")
+			// assert.Nil(t, err)
+			// assert.Equal(t, model.GetID(), "abcdefg")
+			// assert.Equal(t, model.GetToken(), "12345")
+			// assert.Equal(t, model.GetEmail(), "haries@banget.net")
+			// assert.Equal(t, model.GetUserID(), "idharies")
+			// assert.Equal(t, model.GetExpiry(), 10002000)
+
+		})
+	}
+}

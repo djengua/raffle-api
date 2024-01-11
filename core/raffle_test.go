@@ -1,6 +1,7 @@
 package core_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/djengua/raffle-api/core"
@@ -27,11 +28,11 @@ func TestRaffleSelectWinner(t *testing.T) {
 	require.Equal(t, 3, raffle.Turns)
 
 	// Add participants
-	participantOne := core.Participant{Name: "David J"}
-	participantTwo := core.Participant{Name: "Eliott"}
-	participantThree := core.Participant{Name: "Karen"}
-	participantFour := core.Participant{Name: "David"}
-	participantFive := core.Participant{Name: "David"}
+	participantOne := core.RaffleParticipant{Participant: core.Participant{Name: "David J"}}
+	participantTwo := core.RaffleParticipant{Participant: core.Participant{Name: "Eliott"}}
+	participantThree := core.RaffleParticipant{Participant: core.Participant{Name: "Karen"}}
+	participantFour := core.RaffleParticipant{Participant: core.Participant{Name: "David"}}
+	participantFive := core.RaffleParticipant{Participant: core.Participant{Name: "David"}}
 
 	err := raffle.AddParticipant(participantOne)
 	require.NoError(t, err)
@@ -129,8 +130,11 @@ func TestRaffleDiscardTicket(t *testing.T) {
 	require.Equal(t, prizeRaffle, raffle.Prize)
 	require.Equal(t, 3, raffle.Turns)
 
-	participantOne := core.Participant{Name: "Karen"}
-	participantTwo := core.Participant{Name: "Eliott"}
+	participantOne := core.RaffleParticipant{}
+	participantOne.Name = "Karen"
+	// participantTwo := core.RaffleParticipant{}
+	// participantTwo.Name = "Eliott"
+	participantTwo := core.RaffleParticipant{Participant: core.Participant{Name: "Eliott"}}
 
 	err := raffle.AddParticipant(participantOne)
 	require.NoError(t, err)
@@ -158,4 +162,45 @@ func TestRaffleDiscardTicket(t *testing.T) {
 	require.NoError(t, err)
 	_, err = raffle.DiscardTicket()
 	require.NoError(t, err)
+}
+
+func TestRaffleErrors(t *testing.T) {
+	nameRaffle := util.RandomString(20)
+	prizeRaffle := util.RandomString(10)
+
+	raffle := core.Raffle{
+		Name:       nameRaffle,
+		Prize:      prizeRaffle,
+		Turns:      10,
+		MaxTickets: 10,
+		Open:       false,
+	}
+
+	require.Equal(t, nameRaffle, raffle.Name)
+	require.Equal(t, prizeRaffle, raffle.Prize)
+	require.Equal(t, 10, raffle.Turns)
+
+	participantOne := core.RaffleParticipant{}
+	participantOne.Name = "Karen"
+
+	err := raffle.AddParticipant(participantOne)
+	require.Error(t, err)
+
+	result, err := raffle.DiscardTicket()
+	require.Error(t, err)
+	fmt.Println(result)
+	err = raffle.SelectWinner()
+	require.Error(t, err)
+}
+
+func TestRandomNumber(t *testing.T) {
+	result := core.RandomNumber(10, true)
+	require.LessOrEqual(t, result, 99999)
+
+	resultStr := core.TicketNumber(5)
+	require.NotEmpty(t, resultStr)
+
+	resultMel := core.MelGenerator(3)
+	require.NotEmpty(t, resultMel)
+
 }
