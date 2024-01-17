@@ -12,6 +12,7 @@ type Config struct {
 	DBSource            string        `mapstructure:"DB_SOURCE"`
 	DBUri               string        `mapstructure:"DB_URI"`
 	ServerAddress       string        `mapstructure:"SERVER_ADDRESS"`
+	Port                string        `mapstructure:"PORT"`
 	TokenSymmetricKey   string        `mapstructure:"TOKEN_SYMMETRIC_KEY"`
 	DbName              string        `mapstructure:"DB_NAME"`
 	AccessTokenDuration time.Duration `mapstructure:"ACCESS_TOKEN_DURATION"`

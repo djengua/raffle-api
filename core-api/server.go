@@ -19,10 +19,15 @@ type Server struct {
 
 func NewServer(config util.Config, database *mongo.Database) (*Server, error) {
 	fmt.Println("Config Server ...")
+	tokenMaker, err := token.NewPasetoMaker(config.TokenSymmetricKey)
+	if err != nil {
+		return nil, fmt.Errorf("cannot create token maker: %w", err)
+	}
+
 	server := &Server{
-		config:   config,
-		database: database,
-		// tokenMaker: tokenMaker,
+		config:     config,
+		database:   database,
+		tokenMaker: tokenMaker,
 	}
 
 	server.setupRouter()
@@ -33,7 +38,6 @@ func NewServer(config util.Config, database *mongo.Database) (*Server, error) {
 func (s *Server) setupRouter() {
 	router := gin.Default()
 	router.LoadHTMLGlob("./templates/*")
-	// fileServer := http.FileServer(http.Dir("./static"))
 	router.Static("/static", "./static")
 	go ListenToWebSocketChannel()
 
@@ -53,9 +57,13 @@ func (s *Server) setupRouter() {
 	router.PUT("/raffle/add-participant", s.addParticipant)
 	router.PUT("/raffle/add-ticket-to-participant", s.addTicketToParticipant)
 	router.PUT("/raffle/delete-participant", s.deleteParticipant)
-
 	router.POST("/raffle/discard-ticket", s.discardTicket)
 	router.POST("/raffle/winner", s.winner)
+
+	router.POST("/user", s.createUsers)
+	router.GET("/user/all", s.getAllUsers)
+	router.POST("/login", s.loginUser)
+	router.POST("/refresh", s.refreshToken)
 
 	s.router = router
 }

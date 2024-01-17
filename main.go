@@ -39,9 +39,26 @@ func main() {
 		client.Disconnect(ctx)
 	}
 
-	err = server.Start(config.ServerAddress)
+	err = server.Start(":" + config.Port)
+	// err = server.Start(config.ServerAddress)
 	if err != nil {
 		log.Fatal("Cannot start server: ", err)
 		client.Disconnect(ctx)
 	}
+
+	// port := os.Getenv("PORT")
+	//   if port == "" {
+	//       port = "8080"
+	//   }
+
+	//   http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	//       data := map[string]string{
+	//           "Region": os.Getenv("FLY_REGION"),
+	//       }
+
+	//       t.ExecuteTemplate(w, "index.html.tmpl", data)
+	//   })
+
+	//   log.Println("listening on", port)
+	//   log.Fatal(http.ListenAndServe(":"+port, nil))
 }

@@ -56,3 +56,23 @@ type Tanda struct {
 	Name         string             `json:"name" bson:"name"`
 	NumbersTotal int                `json:"numbers_total" bson:"numbers_total"`
 }
+
+type User struct {
+	ID        primitive.ObjectID `json:"id,omitempty" bson:"_id"`
+	Name      string             `json:"name" bson:"name"`
+	Email     string             `json:"email" bson:"email"`
+	Password  string             `json:"-" bson:"password"`
+	CreatedAt time.Time          `json:"createdAt" bson:"created_at"`
+	UpdatedAt time.Time          `json:"updatedAt" bson:"updated_at"`
+	Role      primitive.ObjectID `json:"role" bson:"role"`
+	Active    bool               `json:"active" bson:"active"`
+	// Role      Role               `json:"role" bson:"role"`
+}
+
+type Role struct {
+	ID          primitive.ObjectID `json:"id,omitempty" bson:"_id"`
+	Name        string             `json:"name" bson:"name"`
+	Description string             `json:"description" bson:"description"`
+	CreatedAt   time.Time          `json:"createdAt" bson:"created_at"`
+	UpdatedAt   time.Time          `json:"updatedAt" bson:"updated_at"`
+}
